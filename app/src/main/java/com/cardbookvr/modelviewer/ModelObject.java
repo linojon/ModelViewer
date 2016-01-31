@@ -21,6 +21,8 @@ import java.util.Vector;
  * Created by Jonathan on 1/30/2016.
  */
 public class ModelObject extends RenderObject {
+    static String TAG = "ModelObject";
+
     private static FloatBuffer vertexBuffer;
     private static FloatBuffer colorBuffer;
     private static FloatBuffer normalBuffer;
@@ -116,14 +118,20 @@ public class ModelObject extends RenderObject {
             if (c == 4) {//3 faces
                 for (int i = 1; i < c; i++) {
                     Short s = Short.valueOf(tokens[i]);
-                    s--;
+                    if (s < 0) {
+                        s = (short)(s + v.size());
+                    } else
+                        s--;
                     faces.add(s);
                 }
             } else {//more faces
                 Vector<Short> polygon = new Vector<Short>();
                 for (int i = 1; i < tokens.length; i++) {
                     Short s = Short.valueOf(tokens[i]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     polygon.add(s);
                 }
                 faces.addAll(triangulate(polygon));//triangulate the polygon and add the resulting faces
@@ -134,25 +142,37 @@ public class ModelObject extends RenderObject {
             if (c == 4) {//3 faces
                 for (int i = 1; i < c; i++) {
                     Short s = Short.valueOf(tokens[i].split("/")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     faces.add(s);
-                    s = Short.valueOf(tokens[i].split("/")[1]);
-                    s--;
-                    vtPointer.add(s);
+//                    s = Short.valueOf(tokens[i].split("/")[1]);
+//                    if (s < 0)
+//                        s = (short)(s + v.size());
+//                    else
+//                        s--;
+//                    vtPointer.add(s);
                 }
             } else {//triangulate
                 Vector<Short> tmpFaces = new Vector<Short>();
-                Vector<Short> tmpVt = new Vector<Short>();
+//                Vector<Short> tmpVt = new Vector<Short>();
                 for (int i = 1; i < tokens.length; i++) {
                     Short s = Short.valueOf(tokens[i].split("/")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     tmpFaces.add(s);
-                    s = Short.valueOf(tokens[i].split("/")[1]);
-                    s--;
-                    tmpVt.add(s);
+//                    s = Short.valueOf(tokens[i].split("/")[1]);
+//                    if (s < 0)
+//                        s = (short)(s + v.size());
+//                    else
+//                        s--;
+//                    tmpVt.add(s);
                 }
                 faces.addAll(triangulate(tmpFaces));
-                vtPointer.addAll(triangulate(tmpVt));
+//                vtPointer.addAll(triangulate(tmpVt));
             }
         }
 
@@ -160,10 +180,16 @@ public class ModelObject extends RenderObject {
             if (c == 4) {//3 faces
                 for (int i = 1; i < c; i++) {
                     Short s = Short.valueOf(tokens[i].split("//")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     faces.add(s);
                     s = Short.valueOf(tokens[i].split("//")[1]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + vn.size());
+                    else
+                        s--;
                     vnPointer.add(s);
                 }
             } else {//triangulate
@@ -171,10 +197,16 @@ public class ModelObject extends RenderObject {
                 Vector<Short> tmpVn = new Vector<Short>();
                 for (int i = 1; i < tokens.length; i++) {
                     Short s = Short.valueOf(tokens[i].split("//")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     tmpFaces.add(s);
                     s = Short.valueOf(tokens[i].split("//")[1]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + vn.size());
+                    else
+                        s--;
                     tmpVn.add(s);
                 }
                 faces.addAll(triangulate(tmpFaces));
@@ -187,13 +219,22 @@ public class ModelObject extends RenderObject {
             if (c == 4) {//3 faces
                 for (int i = 1; i < c; i++) {
                     Short s = Short.valueOf(tokens[i].split("/")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     faces.add(s);
-                    s = Short.valueOf(tokens[i].split("/")[1]);
-                    s--;
-                    vtPointer.add(s);
+//                    s = Short.valueOf(tokens[i].split("/")[1]);
+//                    if (s < 0)
+//                        s = (short)(s + v.size());
+//                    else
+//                        s--;
+//                    vtPointer.add(s);
                     s = Short.valueOf(tokens[i].split("/")[2]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + vn.size());
+                    else
+                        s--;
                     vnPointer.add(s);
                 }
             } else {//triangulate
@@ -201,11 +242,17 @@ public class ModelObject extends RenderObject {
                 Vector<Short> tmpVn = new Vector<Short>();
                 for (int i = 1; i < tokens.length; i++) {
                     Short s = Short.valueOf(tokens[i].split("/")[0]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + v.size());
+                    else
+                        s--;
                     tmpFaces.add(s);
-                    s=Short.valueOf(tokens[i].split("/")[1]);
+//                    s=Short.valueOf(tokens[i].split("/")[1]);
                     s=Short.valueOf(tokens[i].split("/")[2]);
-                    s--;
+                    if (s < 0)
+                        s = (short)(s + vn.size());
+                    else
+                        s--;
                     tmpVn.add(s);
                 }
                 faces.addAll(triangulate(tmpFaces));
@@ -226,7 +273,7 @@ public class ModelObject extends RenderObject {
         i = 0;
         tmp = new float[vn.size()];
         for(Float f : vn)
-            tmp[i++] = -(f != null ? f : Float.NaN); //invert the normals
+            tmp[i++] = (f != null ? -f : Float.NaN); //invert the normals
         normalBuffer = allocateFloatBuffer(tmp);
 
         i = 0;
@@ -270,14 +317,13 @@ public class ModelObject extends RenderObject {
         float centerX = (extentsMax.x + extentsMin.x)/2.0f;
         float centerY = (extentsMax.y + extentsMin.y)/2.0f;
         float centerZ = (extentsMax.z + extentsMin.z)/2.0f;
-        return new Vector3(-centerX, -centerY, -centerZ);
+        return new Vector3(centerX, centerY, centerZ);
     }
 
-    public Vector3 normalScale() {
+    public float normalScalar() {
         float sizeX = (extentsMax.x - extentsMin.x);
         float sizeY = (extentsMax.y - extentsMin.y);
         float sizeZ = (extentsMax.z - extentsMin.z);
-        float scalar = Math.max(sizeX, Math.max(sizeY, sizeZ)) * 10f;
-        return new Vector3(sizeX/scalar, sizeY/scalar, sizeZ/scalar);
+        return (2.0f / Math.max(sizeX, Math.max(sizeY, sizeZ)));
     }
 }

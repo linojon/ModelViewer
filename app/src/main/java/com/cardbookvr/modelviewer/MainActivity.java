@@ -27,16 +27,21 @@ public class MainActivity extends CardboardActivity implements IRenderBox {
 
     @Override
     public void setup() {
-        //RenderBox.instance.mainLight.transform.setLocalPosition(0,0,-10);
-        ModelObject model = new ModelObject(R.raw.skull);
+        //RenderBox.instance.mainLight.transform.setLocalPosition(2,2,0);
+        ModelObject model = new ModelObject(R.raw.teapot);
         Log.d(TAG, "extentsMin: " + model.extentsMin.toString() );
         Log.d(TAG, "extentsMax: " + model.extentsMax.toString() );
-        modelRoot = new Transform()
-                .setLocalPosition(0, -2, -3);
+        Log.d(TAG, "centerOffset: " + model.center().toString());
+        Log.d(TAG, "normalScale: " + model.normalScalar());
+
+        //Vector3 center = model.center();
+        float scalar = model.normalScalar();
         new Transform()
-                .setParent(modelRoot)
-                .setLocalPosition(model.center())
-                .setLocalScale(model.normalScale())
+                .setParent(modelRoot, true)
+                //.setLocalPosition(-center.x, -center.y, -center.z)
+                .setLocalPosition(0, -2, -3)
+                .setLocalScale(scalar, scalar, scalar)
+//                .setLocalRotation(90, 0, 0)
                 .addComponent(model);
     }
 
