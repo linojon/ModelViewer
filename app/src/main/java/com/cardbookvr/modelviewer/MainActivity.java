@@ -6,13 +6,14 @@ import android.util.Log;
 import com.cardbook.renderbox.IRenderBox;
 import com.cardbook.renderbox.RenderBox;
 import com.cardbook.renderbox.Transform;
+import com.cardbook.renderbox.math.MathUtils;
 import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
 
 public class MainActivity extends CardboardActivity implements IRenderBox {
     static String TAG = "MainActivity";
 
-    Transform modelRoot;
+    Transform modelTrans;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +37,20 @@ public class MainActivity extends CardboardActivity implements IRenderBox {
 
         //Vector3 center = model.center();
         float scalar = model.normalScalar();
-        new Transform()
-                .setParent(modelRoot, true)
+        modelTrans = new Transform()
+                //.setParent(modelRoot, true)
                 //.setLocalPosition(-center.x, -center.y, -center.z)
-                .setLocalPosition(0, -2, -3)
+                .setLocalPosition(0, 0, -3)
                 .setLocalScale(scalar, scalar, scalar)
 //                .setLocalRotation(90, 0, 0)
                 .addComponent(model);
+        RenderBox.instance.mainCamera.headTracking = false;
     }
 
     @Override
     public void preDraw() {
-//        float[] hAngles = RenderBox.instance.headAngles;
-//        model.setLocalRotation(hAngles[0] * MathUtils.radiansToDegrees, hAngles[1] * MathUtils.radiansToDegrees, hAngles[2] * MathUtils.radiansToDegrees);
+        float[] hAngles = RenderBox.instance.headAngles;
+        modelTrans.setLocalRotation(hAngles[0] * MathUtils.radiansToDegrees, hAngles[1] * MathUtils.radiansToDegrees, hAngles[2] * MathUtils.radiansToDegrees);
     }
 
     @Override
