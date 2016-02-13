@@ -27,6 +27,7 @@ public class ModelObject extends RenderObject {
 
     private static FloatBuffer vertexBuffer;
     private static FloatBuffer colorBuffer;
+    private static FloatBuffer texCoordBuffer;
     private static FloatBuffer normalBuffer;
     private static ShortBuffer indexBuffer;
     private int numIndices;
@@ -42,25 +43,35 @@ public class ModelObject extends RenderObject {
 
     public ModelObject(int objFile) {
         super();
-        InputStream inputStream = RenderBox.instance.mainActivity.getResources().openRawResource(objFile);
-        if (inputStream == null)
-            return; // error
-        parseObj(inputStream);
-        createSolidColorMaterial(true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = RenderBox.instance.mainActivity.getResources().openRawResource(objFile);
+                if (inputStream == null)
+                    return; // error
+                parseObj(inputStream);
+                createSolidColorMaterial(true);
+            }
+        }).start();
     }
 
     public ModelObject(String uri) {
         super();
-        File file = new File(uri.toString());
-        FileInputStream fileInputStream;
-        try {
-            fileInputStream = new FileInputStream(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return; // error
-        }
-        parseObj(fileInputStream);
-        createSolidColorMaterial(true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(uri.toString());
+                FileInputStream fileInputStream;
+                try {
+                    fileInputStream = new FileInputStream(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return; // error
+                }
+                parseObj(fileInputStream);
+                createSolidColorMaterial(true);
+            }
+        }).start();
     }
 
     public ModelObject createSolidColorMaterial(boolean lighting) {
