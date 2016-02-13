@@ -10,6 +10,8 @@ import com.cardbook.renderbox.materials.SolidColorMaterial;
 import com.cardbook.renderbox.math.Vector3;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,9 +42,24 @@ public class ModelObject extends RenderObject {
 
     public ModelObject(int objFile) {
         super();
-        extentsMin = new Vector3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-        extentsMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-        parseObj(objFile);
+        InputStream inputStream = RenderBox.instance.mainActivity.getResources().openRawResource(objFile);
+        if (inputStream == null)
+            return; // error
+        parseObj(inputStream);
+        createSolidColorMaterial(true);
+    }
+
+    public ModelObject(String uri) {
+        super();
+        File file = new File(uri.toString());
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = new FileInputStream(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return; // error
+        }
+        parseObj(fileInputStream);
         createSolidColorMaterial(true);
     }
 
@@ -59,13 +76,12 @@ public class ModelObject extends RenderObject {
         return this;
     }
 
-    void parseObj(int objFile) {
+    void parseObj(InputStream inputStream) {
         BufferedReader reader = null;
         String line = null;
 
-        InputStream inputStream = RenderBox.instance.mainActivity.getResources().openRawResource(objFile);
-        if (inputStream == null)
-            return; // error
+        extentsMin = new Vector3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+        extentsMax = new Vector3(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 
         reader = new BufferedReader(new InputStreamReader(inputStream));
         if (reader == null)
@@ -82,7 +98,7 @@ public class ModelObject extends RenderObject {
     }
 
     private void parseLine(String line) {
-        Log.v("obj", line);
+        //Log.v("obj", line);
         if (line.startsWith("f")) {//a polygonal face
             processFLine(line);
         } else if (line.startsWith("vn")) {

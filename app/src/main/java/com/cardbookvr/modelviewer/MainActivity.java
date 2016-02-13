@@ -1,6 +1,9 @@
 package com.cardbookvr.modelviewer;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.cardbook.renderbox.IRenderBox;
@@ -29,7 +32,15 @@ public class MainActivity extends CardboardActivity implements IRenderBox {
     @Override
     public void setup() {
         //RenderBox.instance.mainLight.transform.setLocalPosition(2,2,0);
-        ModelObject model = new ModelObject(R.raw.teapot);
+        ModelObject model;
+        Uri intentUri = getIntent().getData();
+        if (intentUri != null) {
+            Log.d(TAG, "!!!! intent " + intentUri.getPath());
+            model = new ModelObject(intentUri.getPath());
+        } else {
+            // default object
+            model = new ModelObject(R.raw.teapot);
+        }
         Log.d(TAG, "extentsMin: " + model.extentsMin.toString() );
         Log.d(TAG, "extentsMax: " + model.extentsMax.toString() );
         Log.d(TAG, "centerOffset: " + model.center().toString());
@@ -57,4 +68,5 @@ public class MainActivity extends CardboardActivity implements IRenderBox {
     public void postDraw() {
 
     }
+
 }
