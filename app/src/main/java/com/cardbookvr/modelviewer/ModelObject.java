@@ -101,8 +101,8 @@ public class ModelObject extends RenderObject {
         try { // try to read lines of the file
             while ((line = reader.readLine()) != null) {
                 parseLine(line);
-                buildBuffers();
             }
+            buildBuffers();
         } catch (IOException e) {
             e.printStackTrace();
         }
